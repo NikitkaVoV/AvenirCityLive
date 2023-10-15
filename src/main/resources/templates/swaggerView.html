@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Custom Swagger UI with Authentication</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/swagger-custom.css}">
+    <!-- Подключите стили Swagger UI -->
+    <link rel="stylesheet" type="text/css" href="/api/swagger-ui/swagger-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Контейнер для Swagger UI -->
+<div id="swagger-ui"></div>
+
+<script src="/api/swagger-ui/swagger-ui-bundle.js"></script>
+<script src="/api/swagger-ui/swagger-ui-standalone-preset.js"></script>
+<script>
+    function authenticate() {
+        const email = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const requestOptions = {
+            method: "POST", // Метод запроса (POST для авторизации)
+            headers: {
+                "Content-Type": "application/json" // Тип содержимого (JSON)
+            },
+            body: JSON.stringify({email, password}) // Преобразование объекта в JSON-строку
+        };
+
+        fetch("/api/auth/login", requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    alert("Вероятно данные не те, попробуй ещё раз");
+                    throw new Error("Ошибка HTTP " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Обработка успешного ответа (например, сохранение токена)
+                const token = data.response.accessToken; // Здесь data.token - ваш токен
+                localStorage.setItem("token-auth", token);
+            })
+            .catch(error => {
+                // Обработка ошибок
+                console.error("Ошибка авторизации:", error.message);
+            });
+    }
+
+    function setToken() {
+        const token = document.getElementById("token_auth").value;
+        localStorage.setItem("token-auth", token);
+    }
+
+    function clearToken() {
+        localStorage.removeItem("token-auth");
+    }
+
+    // Ожидаем события DOMContentLoaded, которое срабатывает после полной загрузки DOM
+    // Инициализация Swagger UI
+    SwaggerUIBundle({
+        url: "/api/v3/api-docs",
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+        plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+        oauth2RedirectUrl: window.location.origin + "/webjars/swagger-ui/oauth2-redirect.html",
+        oauth2RedirectName: "Swagger UI OAuth2",
+        requestInterceptor: function (request) {
+            const token = localStorage.getItem("token-auth");
+            if (token != null) {
+                request.headers.Authorization = "Bearer " + token;
+            }
+            return request;
+        },
+    });
+
+    setTimeout(function () {
+        const $scheme = $('.scheme-container');
+        console.log({$scheme})
+        const content = `
+<div id="auth-form">
+    <h2>Authorization</h2>
+    <div class="auth-groups">
+        <div class="auth-group">
+            <div class="input-group">
+                <div class="field-group">
+                    <label for="username">Email:</label><br>
+                    <input type="text" id="username" name="username">
+                </div>
+                <div class="field-group">
+                    <label for="password">Password:</label><br>
+                    <input type="password" id="password" name="password">
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="btn" type="button" onclick="authenticate()">Login</button>
+                <button class="btn" type="button" onclick="clearToken()">Clear token</button>
+            </div>
+        </div>
+        <div class="auth-group" style="margin-left: 20px">
+            <div class="input-group">
+                <div class="field-group">
+                    <label for="username">Bearer Token:</label><br>
+                    <input style="width: 400px" type="text" id="token_auth" name="token_auth">
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="btn" type="button" onclick="setToken()">Set token</button>
+            </div>
+        </div>
+    </div>
+</div>
+   `
+        var customBlock = `<section class="schemes wrapper block col-12"><div class="my-custom-block">${content}</div></select>`;
+        $scheme.append(customBlock);
+    }, 1000);
+
+
+</script>
+</body>
+</html>

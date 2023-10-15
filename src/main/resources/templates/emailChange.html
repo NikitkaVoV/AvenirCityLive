@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Смена почты на сайте ККЭП</title>
+    <style>
+        /* Стилизация формы */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #007BFF;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        .registration-link {
+            font-weight: bold;
+            text-decoration: underline;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Смена почты на сайте ККЭП</h1>
+    <p>Здравствуйте!</p>
+    <p>Пожалуйста, завершите процесс смены почты, перейдя по следующей ссылке:</p>
+    <p>
+        <a th:href="${tokenUrl}">Завершить смену почты</a>
+    </p>
+    <p>
+        Если кнопка выше не работает, то вставьте следующие ссылку в адресную строку для окончания регистрации:
+        <span th:text="${tokenUrl}">Токен</span>
+    </p>
+    <p>Если вы не начинали процесс смены почты на нашем сайте, проигнорируйте это сообщение.</p>
+</div>
+</body>
+</html>

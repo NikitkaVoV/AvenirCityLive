@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/point_database
+    username: postgres
+    password: postgres
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+
+
+server:
+  port: 8113
+  error:
+    include-stacktrace: always
+
+logging:
+  level:
+    web: debug
+
+app:
+  auth:
+    tokenExpirationMsec: 6000000 #864000000 10 days
+
+bot:
+  telegram:
+    token: 6659718626:AAGAEVl7IftI2dpQqLqMXomzkLwnDs6GK6g
+    bot-name: test_avenir_bot

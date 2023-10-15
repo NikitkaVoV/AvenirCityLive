@@ -1,0 +1,97 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://91.223.199.62:5432/city_avenir
+    username: ${PG_PROD_USERNAME}
+    password: ${PG_PROD_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgresPlusDialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+  security:
+    oauth2:
+      client:
+        registration:
+          vk:
+            clientId: 51619094
+            clientSecret: FICW27I3bARoAKajm7cl
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            client-name: VK
+            provider: vk
+            scope:
+              - email
+        provider:
+          vk:
+            authorization-uri: https://oauth.vk.com/authorize?v=5.131
+            token-uri: https://oauth.vk.com/access_token
+            user-info-uri: https://api.vk.com/method/users.get?{user_id}&fields=bdate&v=5.131
+            user-name-attribute: response
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mail.kkep.service@gmail.com
+    password: idikofeyxlukbbka
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+  devtools:
+    restart:
+      enabled: false
+    remote:
+      restart:
+        enabled: false
+    livereload:
+      enabled: false
+
+server:
+  port: 8020
+  error:
+    include-stacktrace: never
+  tomcat:
+    relaxed-query-chars: "|,{,},[,]"
+
+  forward-headers-strategy: native
+  servlet:
+    context-path: /api
+
+app:
+  auth:
+    tokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
+    tokenRefreshSecret: bccf5501a15d9c5a4dca4d4d845ddd12b4429704b5ef0feadb2bf9d8724bc14040869d3852b2e7f2f865f55350033f3ea0f77b762856558b30ead116843cc617
+    tokenExpirationMsec: 3600000 #3600000 1 hour
+    tokenRefreshExpirationMsec: 2592000000 # 30 days
+  cors:
+    allowedOrigins:
+      - http://localhost:3000
+      - https://kkep.su
+      - https://devs.kkep.su
+  oauth2:
+    authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
+      - https://kkep.su/oauth2/redirect
+      - https://devs.kkep.su/oauth2/redirect
+      - myandroidapp://oauth2/redirect
+      - myiosapp://oauth2/redirect
+  misc:
+    tokens:
+      registrationTokenExpirationMsec: 300000
+      changeEmailTokenExpirationMsec: 300000
+
+bot:
+  vk:
+    clientId: 51770695
+    clientSecret: 6W4lDcq6ZQXMqKtacEwx
+    groupId: 220122071
+    groupAccess: vk1.a.fzl7v-HvT2OmEzC1w39HIUtUxWgoVqFt10Lgj--1TVy5R9RS9ak5ArV7VNAYia2AHDDKxOB3qtDGJ41I1QWXCnEEzKDiHFui9pfg8LcWqpCBOtgFpVKsDbgfV2Nvv4Rbgl5Xf_3D2ZfKMZ9p7AwveF9xRocAA4ep-KLcehg0La6fMtGkuUKVtVUGbNHAzsWDhjFsmqP_Bt1DmmMaOUlQ7A
+  telegram:
+    token: 6404460355:AAGP9BHpZufuQQr3-2vekPw71WlTTC9IzXU
+    bot-name: avenir_team_bot
+
+

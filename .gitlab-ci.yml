@@ -1,0 +1,42 @@
+stages:
+  - java_build
+  - docker_build
+  - deploy
+
+default:
+  services:
+    - docker:20.10.16-dind
+
+java_build:
+  stage: java_build
+  tags:
+    - docker
+  image: amazoncorretto:17.0.7-alpine
+  script:
+    - ./gradlew build
+  artifacts:
+    paths:
+      - build/libs/*.jar
+
+docker_build:
+  stage: docker_build
+  tags:
+    - docker
+  image: docker:20.10.9
+  script:
+    - docker build -t registry.gitlab.com/kkep_student/schedule/backend .
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
+    - docker push registry.gitlab.com/kkep_student/schedule/backend
+
+deploy:
+  stage: deploy
+  tags:
+    - shell
+  image: docker:20.10.9
+  script:
+    - docker rm -f kkep_schedule_backend
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.gitlab.com
+    - docker run -d --name kkep_schedule_backend --network=proxy -e PG_PROD_USERNAME=$CI_PG_PROD_USERNAME -e PG_PROD_PASSWORD=$CI_PG_PROD_PASSWORD registry.gitlab.com/kkep_student/schedule/backend:latest
+
+
+
